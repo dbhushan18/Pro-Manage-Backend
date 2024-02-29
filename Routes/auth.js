@@ -3,6 +3,8 @@ const express = require("express");
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const verifyJwt = require("../Middleware/authMiddleware")
+
 
 router.post("/register", async (req, res) => {
     try {
@@ -72,13 +74,13 @@ router.post("/login", async (req, res) => {
             { message: "user logged in successfully", token: token, name: userDetails.name,  id: userDetails._id});
     }
     catch (err) {
-        // res.status(400).json({message: "something went wrong"},err);
+        res.status(400).json({message: "something went wrong"},err);
         console.log(err);
     }
 
 })
 
-router.put("/changePassword", async (req, res) => {
+router.put("/changePassword", verifyJwt, async (req, res) => {
     try {
 
         const {name, oldPassword, newPassword, newName} = req.body;

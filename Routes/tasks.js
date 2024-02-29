@@ -2,8 +2,10 @@ const task = require("../Models/task")
 const express = require("express")
 const moment = require('moment');
 const router = express.Router();
+const verifyJwt = require("../Middleware/authMiddleware")
 
-router.post("/newTask", async (req, res) => {
+
+router.post("/newTask", verifyJwt, async (req, res) => {
     try {
         const { title, priority, state, dueDate, createdAt, tasks, owner } = req.body;
         if (!title || !priority || !tasks) {
@@ -68,7 +70,7 @@ router.get('/allTasks/:ownerId', async (req, res) => {
 
 module.exports = router;
 
-router.put('/cards/:cardId/tasks/:taskId', async (req, res) => {
+router.put('/cards/:cardId/tasks/:taskId', verifyJwt, async (req, res) => {
     try {
         const cardId = req.params.cardId;
         const taskId = req.params.taskId;
@@ -114,7 +116,7 @@ router.put("/tasks/:taskId", async (req, res) => {
     }
 })
 
-router.put("/edit/:id", async (req, res) => {
+router.put("/edit/:id", verifyJwt, async (req, res) => {
     try {
         const { title, priority, state, dueDate, createdAt, tasks, owner } = req.body;
         const cardId = req.params.id;
@@ -143,7 +145,7 @@ router.put("/edit/:id", async (req, res) => {
     }
 })
 
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/:id", verifyJwt, async (req, res) => {
     try {
         const cardId = req.params.id;
         const deletedCard = await task.findByIdAndDelete(cardId);

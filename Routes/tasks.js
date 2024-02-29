@@ -2,7 +2,7 @@ const task = require("../Models/task")
 const express = require("express")
 const moment = require('moment');
 const router = express.Router();
-const verifyJwt = require("../Middleware/authMiddleware")
+const verifyJwt = require("../Middlewares/authMiddleware")
 
 
 router.post("/newTask", verifyJwt, async (req, res) => {

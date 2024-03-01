@@ -2,7 +2,7 @@ const task = require("../Models/task")
 const express = require("express")
 const moment = require('moment');
 const router = express.Router();
-const verifyJwt = require("../Middleware/authMiddleware")
+const verifyJwt = require("../Middlewares/authMiddleware")
 
 
 router.post("/newTask", verifyJwt, async (req, res) => {
@@ -163,6 +163,7 @@ router.delete("/delete/:id", verifyJwt, async (req, res) => {
 router.get("/board/card/:cardId",async (req,res)=>{
     try{
         const cardId = req.params.cardId;
+
         const cardDetails = await task.findById(cardId);
         if (!cardDetails) {
             return res.status(404).json({ message: 'Card not found' });
@@ -182,15 +183,20 @@ router.get('/counts/:ownerId', async (req, res) => {
 
         const tasks = await task.find({ owner: ownerId });
 
+        const currentDate = new Date();
+        const dueDateTasks = tasks.filter(task => task.dueDate && new Date(task.dueDate) < currentDate);
+
+        const completed = tasks.filter(task => task.state === 'Done').length;
+
         const counts = {
             backlog: tasks.filter(task => task.state === 'Backlog').length,
             todo: tasks.filter(task => task.state === 'To-do').length,
-            completed: tasks.filter(task => task.state === 'Done').length,
+            completed: completed,
             inProgress: tasks.filter(task => task.state === 'In Progress').length,
             lowPriority: tasks.filter(task => task.priority === 'low priority').length,
             moderatePriority: tasks.filter(task => task.priority === 'moderate priority').length,
             highPriority: tasks.filter(task => task.priority === 'high priority').length,
-            dueDateTasks: tasks.filter(task => task.dueDate).length
+            dueDateTasks: dueDateTasks.length - completed,
         };
 
         res.json(counts);

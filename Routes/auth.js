@@ -3,7 +3,7 @@ const express = require("express");
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const verifyJwt = require("../Middleware/authMiddleware")
+const verifyJwt = require("../Middlewares/authMiddleware")
 
 
 router.post("/register", async (req, res) => {
